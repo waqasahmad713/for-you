@@ -1296,36 +1296,41 @@
             }
 
             async function findAvailableMemoryPhotos() {
-                const found = [];
-                const locations = ["", "memories/", "photos/", "images/"];
+                // NOTE: locations lists "memories/" first because that's where
+                // this project's photos actually live (memories/pic1.jpeg ... pic9.jpeg).
+                const locations = ["memories/", "", "photos/", "images/"];
+                const tasks = [];
+
                 for (let i = 1; i <= CONFIG.maxMemorySlots; i++) {
-                    let matched = false;
-                    for (const ext of CONFIG.memoryExtensions) {
-                        if (matched) break;
-                        for (const base of locations) {
-                            if (matched) break;
-                            const candidates = [
-                                `${base}pic${i}.${ext}`,
-                                `${base}memory-${i}.${ext}`,
-                                `${base}photo-${i}.${ext}`,
-                                `${base}${i}.${ext}`,
-                            ];
-                            for (const src of candidates) {
-                                const result = await probeImage(src);
-                                if (result) {
-                                    found.push({
-                                        src: result,
-                                        caption: CONFIG.captionPool[(i - 1) % CONFIG
-                                            .captionPool.length],
-                                    });
-                                    matched = true;
-                                    break;
-                                }
-                            }
+                    const candidates = [];
+                    for (const base of locations) {
+                        for (const ext of CONFIG.memoryExtensions) {
+                            candidates.push(`${base}pic${i}.${ext}`);
+                            candidates.push(`${base}memory-${i}.${ext}`);
+                            candidates.push(`${base}photo-${i}.${ext}`);
+                            candidates.push(`${base}${i}.${ext}`);
                         }
                     }
+                    // Probe every candidate for this slot AT THE SAME TIME instead of
+                    // one-by-one. The old code awaited each guess sequentially, which
+                    // meant checking a single missing slot (e.g. #10, #11, #12) could
+                    // mean 80 requests in a row before moving on — easily 30-60+
+                    // seconds of dead time before any photo appeared.
+                    const task = Promise.all(candidates.map(probeImage)).then((results) => {
+                        const match = results.find((r) => r !== null);
+                        if (!match) return null;
+                        return {
+                            index: i,
+                            src: match,
+                            caption: CONFIG.captionPool[(i - 1) % CONFIG.captionPool.length],
+                        };
+                    });
+                    tasks.push(task);
                 }
-                return found;
+
+                // All 12 slots are also checked in parallel with each other.
+                const settled = await Promise.all(tasks);
+                return settled.filter(Boolean).sort((a, b) => a.index - b.index);
             }
 
             // ─────────────────────────────────────
