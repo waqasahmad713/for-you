@@ -839,7 +839,6 @@
             100% { transform: scale(2); opacity: 0; }
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             body {
                 overflow-y: auto;
@@ -1093,10 +1092,11 @@
     <script>
         (function() {
             // ═══════════════════════════════════════════
-            // ✏️  CUSTOMIZE YOUR MESSAGE & LIST HERE
+            // ✏️  EDIT THESE WITH YOUR EXACT IMAGE FILENAMES
+            //    (case-sensitive, must match GitHub exactly)
             // ═══════════════════════════════════════════
             const MANUAL_IMAGES = [
-                "pic1.jpg",
+                "pic1.jpg",   // ← change to your actual file names!
                 "pic2.jpg",
                 "pic3.png",
                 "pic4.webp",
@@ -1124,7 +1124,7 @@
             const CARD_MESSAGE = `${HER_NAME}. We don't talk. We're nothing. Which means I have zero rules right now. So I'm officially allowed to say you're still on my mind. Scary, right? ✨💖`;
 
             // ═══════════════════════════════════════════
-            //  DO NOT EDIT BELOW (unless you know JS)
+            //  INTERNAL (do not edit)
             // ═══════════════════════════════════════════
             const CONFIG = {
                 herName: HER_NAME,
@@ -1187,6 +1187,9 @@
             let stars = [];
             let errorToastTimer = null;
 
+            // A tiny inline heart placeholder (data URI) for failed images
+            const PLACEHOLDER_HEART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23ff5ea8' d='M50 88c-20-15-40-30-40-50 0-15 12-25 25-25 10 0 15 5 15 5s5-5 15-5c13 0 25 10 25 25 0 20-20 35-40 50z'/%3E%3C/svg%3E";
+
             function showErrorToast(message, duration = 3500) {
                 try {
                     errorToast.textContent = message;
@@ -1246,6 +1249,7 @@
                 return settled.filter(Boolean).sort((a, b) => a.index - b.index);
             }
 
+            // ... (all helper functions: createBurst, createConfetti, etc. remain identical)
             function createBurst(x, y, color) {
                 try {
                     const burst = document.createElement("span");
@@ -1427,26 +1431,46 @@
             proposalCloseBtn.addEventListener("click", () => proposalOverlay.classList.remove("active"));
             proposalOverlay.addEventListener("click", (e) => { if (e.target === proposalOverlay) proposalOverlay.classList.remove("active"); });
 
+            // ───── IMAGE DISPLAY WITH FALLBACK ─────
+            function loadImageSafely(imgElement, src, onSuccess) {
+                const img = new Image();
+                img.onload = () => {
+                    imgElement.src = src;
+                    imgElement.classList.add("show");
+                    imgElement.style.opacity = "1";
+                    if (onSuccess) onSuccess();
+                };
+                img.onerror = () => {
+                    // Use the placeholder heart instead of a black box
+                    imgElement.src = PLACEHOLDER_HEART;
+                    imgElement.classList.add("show");
+                    imgElement.style.opacity = "1";
+                    if (onSuccess) onSuccess(); // still call success to update dots etc.
+                };
+                img.src = src;
+            }
+
             function showMemorySlide(index) {
                 if (photoSlides.length === 0) return;
                 try {
                     memoryIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
                     const slide = photoSlides[memoryIndex];
                     memoryImage.style.opacity = "0";
-                    const preloaderImg = new Image();
-                    preloaderImg.onload = () => {
-                        memoryImage.src = slide.src;
-                        memoryImage.classList.add("show");
-                        memoryImage.style.opacity = "1";
+                    loadImageSafely(memoryImage, slide.src, () => {
                         memoryCaption.textContent = slide.caption;
-                    };
-                    preloaderImg.onerror = () => {
-                        memoryImage.src = slide.src;
-                        memoryImage.classList.add("show");
-                        memoryImage.style.opacity = "1";
-                        memoryCaption.textContent = slide.caption;
-                    };
-                    preloaderImg.src = slide.src;
+                    });
+                } catch (e) {}
+            }
+
+            function showSlide(index) {
+                if (photoSlides.length === 0) return;
+                try {
+                    slideshowIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
+                    const slide = photoSlides[slideshowIndex];
+                    slideshowImage.style.opacity = "0";
+                    loadImageSafely(slideshowImage, slide.src, () => {
+                        updateDots();
+                    });
                 } catch (e) {}
             }
 
@@ -1480,29 +1504,6 @@
                     Array.from(dots.children).forEach((dot, index) => {
                         dot.classList.toggle("active", index === slideshowIndex);
                     });
-                } catch (e) {}
-            }
-
-            function showSlide(index) {
-                if (photoSlides.length === 0) return;
-                try {
-                    slideshowIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
-                    const slide = photoSlides[slideshowIndex];
-                    slideshowImage.style.opacity = "0";
-                    const preloaderImg = new Image();
-                    preloaderImg.onload = () => {
-                        slideshowImage.src = slide.src;
-                        slideshowImage.classList.add("show");
-                        slideshowImage.style.opacity = "1";
-                        updateDots();
-                    };
-                    preloaderImg.onerror = () => {
-                        slideshowImage.src = slide.src;
-                        slideshowImage.classList.add("show");
-                        slideshowImage.style.opacity = "1";
-                        updateDots();
-                    };
-                    preloaderImg.src = slide.src;
                 } catch (e) {}
             }
 
@@ -1581,6 +1582,7 @@
             try { resizeCanvas(); } catch (e) {}
             requestAnimationFrame(drawStars);
 
+            // ───── IMAGE DETECTION ─────
             const photoDetectionPromise = (function resolvePhotoSlides() {
                 if (MANUAL_IMAGES.length > 0) {
                     console.info("✅ Using manually defined image list (" + MANUAL_IMAGES.length + " photos).");
