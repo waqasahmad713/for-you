@@ -45,7 +45,6 @@
             inset: 0;
         }
 
-        /* ---- STAR CANVAS ---- */
         canvas#stars {
             position: fixed;
             inset: 0;
@@ -55,7 +54,6 @@
             pointer-events: none;
         }
 
-        /* ---- PRELOADER ---- */
         .preloader {
             position: fixed;
             inset: 0;
@@ -94,7 +92,6 @@
             animation: dots 1.4s steps(3, end) infinite;
         }
 
-        /* ---- MAIN SCENE ---- */
         .scene {
             position: relative;
             z-index: 2;
@@ -124,7 +121,6 @@
             animation: twinkle 2.4s ease-in-out infinite;
         }
 
-        /* ---- SPARKLE ORBIT AROUND GIFT ---- */
         .sparkle-orbit {
             position: absolute;
             pointer-events: none;
@@ -137,7 +133,6 @@
             animation: orbitPulse 1.5s ease-in-out infinite;
         }
 
-        /* ---- GIFT STAGE ---- */
         .gift-stage {
             position: relative;
             display: flex;
@@ -289,7 +284,6 @@
             opacity: 0;
         }
 
-        /* ---- INSTRUCTION ---- */
         .instruction {
             margin-top: 1.2rem;
             font-size: clamp(0.95rem, 1.8vw, 1.1rem);
@@ -311,7 +305,6 @@
             animation-delay: 0.8s;
         }
 
-        /* ---- POPUP TEXT ---- */
         .popup-text {
             position: fixed;
             top: 44%;
@@ -332,7 +325,6 @@
             animation: popupBoom 1.6s cubic-bezier(.22, 1, .36, 1) forwards;
         }
 
-        /* ---- BURST & CONFETTI ---- */
         .burst {
             position: fixed;
             border-radius: 50%;
@@ -367,7 +359,6 @@
             font-size: 1.3rem;
         }
 
-        /* ---- MESSAGE CARD ---- */
         .message-card {
             position: fixed;
             left: 50%;
@@ -468,7 +459,6 @@
             animation: btnSparklePop 0.6s ease-out forwards;
         }
 
-        /* ---- MEMORY STRIP ---- */
         .memory-strip {
             position: fixed;
             left: 50%;
@@ -536,7 +526,6 @@
             text-align: center;
         }
 
-        /* ---- OVERLAY / SLIDESHOW ---- */
         .overlay {
             position: fixed;
             inset: 0;
@@ -627,7 +616,6 @@
             box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
         }
 
-        /* ---- ERROR TOAST ---- */
         .error-toast {
             position: fixed;
             bottom: 2rem;
@@ -649,7 +637,6 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ---- ANIMATIONS ---- */
         @keyframes gentleBob {
             0%,
             100% {
@@ -929,7 +916,6 @@
             }
         }
 
-        /* ---- MOBILE ADJUSTMENTS ---- */
         @media (max-width: 600px) {
             body {
                 overflow-y: auto;
@@ -1109,7 +1095,6 @@
 <body>
     <canvas id="stars" aria-hidden="true"></canvas>
 
-    <!-- PRELOADER -->
     <div class="preloader" id="preloader" role="status" aria-label="Loading">
         <div class="preloader-inner">
             <div class="heart-loader">💖</div>
@@ -1117,7 +1102,6 @@
         </div>
     </div>
 
-    <!-- MAIN SCENE -->
     <main class="scene" id="scene" aria-label="Gift surprise">
         <div class="title-glow">✨ A little surprise for you ✨</div>
         <div class="gift-stage" id="giftStage" role="button" aria-label="Tap to open gift" tabindex="0">
@@ -1133,10 +1117,8 @@
         </div>
     </main>
 
-    <!-- POPUP TEXT -->
     <div class="popup-text" id="popupText" aria-hidden="true"></div>
 
-    <!-- MESSAGE CARD -->
     <div class="message-card" id="messageCard" aria-label="Message card">
         <div class="flower-emoji">🌸</div>
         <h1 id="cardTitle">For You</h1>
@@ -1144,27 +1126,23 @@
         <button id="memoriesButton" aria-label="See our memories">See Our Memories 💫</button>
     </div>
 
-    <!-- MEMORY STRIP -->
     <div class="memory-strip" id="memoryStrip" aria-label="Memory preview">
         <div class="memory-frame">
-            <img id="memoryImage" alt="A lovely memory" loading="lazy" />
+            <img id="memoryImage" alt="A lovely memory" />
             <div class="memory-caption" id="memoryCaption">A little piece of our story ✨</div>
         </div>
     </div>
 
-    <!-- FULLSCREEN SLIDESHOW OVERLAY -->
     <div class="overlay" id="overlay" aria-label="Fullscreen memories slideshow">
         <div class="slideshow-frame">
             <button class="close-btn" id="closeBtn" aria-label="Close slideshow">×</button>
-            <img id="slideshowImage" alt="Memory" loading="lazy" />
+            <img id="slideshowImage" alt="Memory" />
             <div class="dots" id="dots"></div>
         </div>
     </div>
 
-    <!-- ERROR TOAST -->
     <div class="error-toast" id="errorToast" aria-live="polite"></div>
 
-    <!-- AUDIO -->
     <audio id="bgMusic" loop preload="auto" crossorigin="anonymous">
         <source src="music.mp3" type="audio/mpeg" />
         <source src="music.wav" type="audio/wav" />
@@ -1172,9 +1150,6 @@
 
     <script>
         (function() {
-            // ─────────────────────────────────────
-            // CONFIGURATION
-            // ─────────────────────────────────────
             const CONFIG = {
                 herName: "MAHNOOR 💖🌙",
                 messageRevealDelay: 1100,
@@ -1199,9 +1174,6 @@
                 ],
             };
 
-            // ─────────────────────────────────────
-            // DOM REFERENCES
-            // ─────────────────────────────────────
             const $ = (id) => document.getElementById(id);
             const preloader = $("preloader");
             const scene = $("scene");
@@ -1224,9 +1196,6 @@
             const canvas = $("stars");
             const ctx = canvas.getContext("2d");
 
-            // ─────────────────────────────────────
-            // STATE
-            // ─────────────────────────────────────
             let photoSlides = [];
             let hasOpened = false;
             let slideshowTimer = null;
@@ -1237,9 +1206,6 @@
             let stars = [];
             let errorToastTimer = null;
 
-            // ─────────────────────────────────────
-            // ERROR HANDLING & TOAST
-            // ─────────────────────────────────────
             function showErrorToast(message, duration = 3500) {
                 try {
                     errorToast.textContent = message;
@@ -1269,9 +1235,6 @@
                 }
             }
 
-            // ─────────────────────────────────────
-            // IMAGE PROBING
-            // ─────────────────────────────────────
             function probeImage(src) {
                 return new Promise((resolve) => {
                     try {
@@ -1296,41 +1259,35 @@
             }
 
             async function findAvailableMemoryPhotos() {
-                const found = [];
-                const locations = ["", "memories/", "photos/", "images/"];
+                const locations = ["memories/", "", "photos/", "images/"];
+                const tasks = [];
+
                 for (let i = 1; i <= CONFIG.maxMemorySlots; i++) {
-                    let matched = false;
-                    for (const ext of CONFIG.memoryExtensions) {
-                        if (matched) break;
-                        for (const base of locations) {
-                            if (matched) break;
-                            const candidates = [
-                                `${base}pic${i}.${ext}`,
-                                `${base}memory-${i}.${ext}`,
-                                `${base}photo-${i}.${ext}`,
-                                `${base}${i}.${ext}`,
-                            ];
-                            for (const src of candidates) {
-                                const result = await probeImage(src);
-                                if (result) {
-                                    found.push({
-                                        src: result,
-                                        caption: CONFIG.captionPool[(i - 1) % CONFIG
-                                            .captionPool.length],
-                                    });
-                                    matched = true;
-                                    break;
-                                }
-                            }
+                    const candidates = [];
+                    for (const base of locations) {
+                        for (const ext of CONFIG.memoryExtensions) {
+                            candidates.push(`${base}pic${i}.${ext}`);
+                            candidates.push(`${base}memory-${i}.${ext}`);
+                            candidates.push(`${base}photo-${i}.${ext}`);
+                            candidates.push(`${base}${i}.${ext}`);
                         }
                     }
+                    const task = Promise.all(candidates.map(probeImage)).then((results) => {
+                        const match = results.find((r) => r !== null);
+                        if (!match) return null;
+                        return {
+                            index: i,
+                            src: match,
+                            caption: CONFIG.captionPool[(i - 1) % CONFIG.captionPool.length],
+                        };
+                    });
+                    tasks.push(task);
                 }
-                return found;
+
+                const settled = await Promise.all(tasks);
+                return settled.filter(Boolean).sort((a, b) => a.index - b.index);
             }
 
-            // ─────────────────────────────────────
-            // VISUAL EFFECTS
-            // ─────────────────────────────────────
             function createBurst(x, y, color) {
                 try {
                     const burst = document.createElement("span");
@@ -1450,9 +1407,6 @@
                 }
             }
 
-            // ─────────────────────────────────────
-            // GIFT OPENING
-            // ─────────────────────────────────────
             function openGift() {
                 if (hasOpened) return;
                 hasOpened = true;
@@ -1467,10 +1421,8 @@
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
 
-                // Massive celebration burst
                 massiveCelebration(centerX, centerY);
 
-                // Show popup text
                 try {
                     popupText.textContent = "💖 Surprise! 💖";
                     popupText.classList.add("show");
@@ -1479,7 +1431,6 @@
                     }, 1700);
                 } catch (e) { /* silent */ }
 
-                // Reveal message card
                 setTimeout(() => {
                     try {
                         messageCard.classList.add("show");
@@ -1497,7 +1448,6 @@
 
                 safePlayAudio();
 
-                // Continuous subtle emoji rain for a few seconds
                 let rainCount = 0;
                 const rainInterval = setInterval(() => {
                     if (rainCount >= 25) {
@@ -1509,7 +1459,6 @@
                 }, 350);
             }
 
-            // Bind gift opening
             giftStage.addEventListener("click", openGift);
             giftStage.addEventListener("touchend", (e) => {
                 e.preventDefault();
@@ -1522,9 +1471,6 @@
                 }
             });
 
-            // ─────────────────────────────────────
-            // MEMORIES BUTTON
-            // ─────────────────────────────────────
             memoriesButton.addEventListener("click", async (e) => {
                 createButtonSparkle(memoriesButton);
                 await photoDetectionPromise;
@@ -1541,9 +1487,6 @@
                 }
             });
 
-            // ─────────────────────────────────────
-            // CLOSE SLIDESHOW
-            // ─────────────────────────────────────
             closeBtn.addEventListener("click", closeSlideshow);
             closeBtn.addEventListener("touchend", (e) => {
                 e.preventDefault();
@@ -1566,26 +1509,41 @@
                 if (overlay.classList.contains("active")) closeSlideshow();
             });
 
-            // Close overlay on backdrop click
             overlay.addEventListener("click", (e) => {
                 if (e.target === overlay) closeSlideshow();
             });
 
-            // ─────────────────────────────────────
-            // MEMORY STRIP PLAYBACK
-            // ─────────────────────────────────────
+            /**
+             * FIXED: Preload the image before swapping it in.
+             * This ensures the image is fully loaded and decoded before
+             * we set opacity to 1, so the CSS transition actually fires.
+             */
             function showMemorySlide(index) {
                 if (photoSlides.length === 0) return;
                 try {
                     memoryIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
                     const slide = photoSlides[memoryIndex];
+
+                    // Fade out current image first
                     memoryImage.style.opacity = "0";
-                    setTimeout(() => {
+
+                    // Preload the new image in memory
+                    const preloaderImg = new Image();
+                    preloaderImg.onload = () => {
+                        // Image is ready — swap and fade in
                         memoryImage.src = slide.src;
                         memoryImage.classList.add("show");
                         memoryImage.style.opacity = "1";
                         memoryCaption.textContent = slide.caption;
-                    }, CONFIG.photoFadeDuration);
+                    };
+                    preloaderImg.onerror = () => {
+                        // Even if preload fails, try setting src directly
+                        memoryImage.src = slide.src;
+                        memoryImage.classList.add("show");
+                        memoryImage.style.opacity = "1";
+                        memoryCaption.textContent = slide.caption;
+                    };
+                    preloaderImg.src = slide.src;
                 } catch (e) {
                     console.warn("Memory slide error:", e.message);
                 }
@@ -1605,9 +1563,6 @@
                 }, CONFIG.photoSwitchInterval);
             }
 
-            // ─────────────────────────────────────
-            // SLIDESHOW
-            // ─────────────────────────────────────
             function createDots() {
                 try {
                     dots.innerHTML = "";
@@ -1629,18 +1584,34 @@
                 } catch (e) { /* silent */ }
             }
 
+            /**
+             * FIXED: Same preload approach as showMemorySlide.
+             * Ensures the slideshow image is fully loaded before fading in.
+             */
             function showSlide(index) {
                 if (photoSlides.length === 0) return;
                 try {
                     slideshowIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
                     const slide = photoSlides[slideshowIndex];
+
+                    // Fade out
                     slideshowImage.style.opacity = "0";
-                    setTimeout(() => {
+
+                    // Preload
+                    const preloaderImg = new Image();
+                    preloaderImg.onload = () => {
                         slideshowImage.src = slide.src;
                         slideshowImage.classList.add("show");
                         slideshowImage.style.opacity = "1";
                         updateDots();
-                    }, CONFIG.photoFadeDuration);
+                    };
+                    preloaderImg.onerror = () => {
+                        slideshowImage.src = slide.src;
+                        slideshowImage.classList.add("show");
+                        slideshowImage.style.opacity = "1";
+                        updateDots();
+                    };
+                    preloaderImg.src = slide.src;
                 } catch (e) {
                     console.warn("Slide error:", e.message);
                 }
@@ -1661,7 +1632,6 @@
                 }, CONFIG.photoSwitchInterval);
             }
 
-            // Touch swipe for slideshow
             let touchStartX = 0;
             let touchStartY = 0;
             overlay.addEventListener("touchstart", (e) => {
@@ -1680,9 +1650,6 @@
                 }
             });
 
-            // ─────────────────────────────────────
-            // STARFIELD
-            // ─────────────────────────────────────
             function resizeCanvas() {
                 try {
                     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1746,9 +1713,6 @@
             try { resizeCanvas(); } catch (e) { /* silent */ }
             requestAnimationFrame(drawStars);
 
-            // ─────────────────────────────────────
-            // INITIALIZATION
-            // ─────────────────────────────────────
             const photoDetectionPromise = findAvailableMemoryPhotos()
                 .then((found) => {
                     photoSlides = found;
@@ -1756,7 +1720,9 @@
                         try {
                             memoriesButton.style.display = "none";
                         } catch (e) { /* silent */ }
-                        console.info("No memory photos detected. Add pic1.jpg through pic12.jpg in the root or memories/ folder.");
+                        console.info(
+                            "No memory photos detected. Add pic1.jpg through pic12.jpg in the root or memories/ folder."
+                            );
                     } else {
                         console.info(`Found ${photoSlides.length} memory photo(s).`);
                     }
@@ -1771,14 +1737,12 @@
                     return [];
                 });
 
-            // Hide preloader after a short delay
             setTimeout(() => {
                 try {
                     preloader.classList.add("hidden");
                 } catch (e) { /* silent */ }
             }, 1600);
 
-            // Attempt audio on first user gesture
             const unlockAudio = () => {
                 safePlayAudio();
                 document.removeEventListener("pointerdown", unlockAudio);
@@ -1787,7 +1751,6 @@
             document.addEventListener("pointerdown", unlockAudio, { once: true });
             document.addEventListener("touchstart", unlockAudio, { once: true });
 
-            // Start memory playback once photos are detected (if gift already opened somehow)
             setTimeout(async () => {
                 await photoDetectionPromise;
                 if (photoSlides.length > 0 && hasOpened && !memoryPlaybackStarted) {
@@ -1795,9 +1758,6 @@
                 }
             }, 2000);
 
-            // ─────────────────────────────────────
-            // GLOBAL ERROR CATCH
-            // ─────────────────────────────────────
             window.addEventListener("error", (event) => {
                 if (event.target && event.target.tagName === "IMG") {
                     console.warn("Image failed to load:", event.target.src);
@@ -1812,7 +1772,8 @@
 
             console.log("%c💖 Surprise page ready! %cTap the gift box to begin.",
                 "font-size:1.2em;color:#ff5ea8;", "color:#fff;");
-            console.log("%c📸 Place your photos as 'pic1.jpg', 'pic2.jpg', etc. in the root folder or a 'memories/' folder.",
+            console.log(
+                "%c📸 Place your photos as 'pic1.jpg', 'pic2.jpg', etc. in the root folder or a 'memories/' folder.",
                 "color:#ffd166;");
         })();
     </script>
