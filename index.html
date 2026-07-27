@@ -625,7 +625,6 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ───── PROPOSAL OVERLAY ───── */
         .proposal-overlay {
             position: fixed;
             inset: 0;
@@ -719,7 +718,6 @@
             transform: scale(0.95);
         }
 
-        /* Animations */
         @keyframes cardAppear {
             from { opacity: 0; transform: scale(0.8) translateY(30px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
@@ -839,7 +837,6 @@
             100% { transform: scale(2); opacity: 0; }
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             body {
                 overflow-y: auto;
@@ -1092,19 +1089,16 @@
 
     <script>
         (function() {
-            // ═══════════════════════════════════════════
-            // ✏️  CUSTOMIZE YOUR MESSAGE & LIST HERE
-            // ═══════════════════════════════════════════
+            // ═══════════════════════════════════════════════
+            // ✏️  PUT YOUR EXACT IMAGE FILENAMES HERE
+            //     (copy them from your GitHub repo – case sensitive!)
+            //     Example: "photo1.jpg", "image-2.PNG", "pic3.jpeg"
+            // ═══════════════════════════════════════════════
             const MANUAL_IMAGES = [
-                "pic1.jpg",
-                "pic2.jpg",
-                "pic3.png",
-                "pic4.webp",
-                "pic5.jpeg",
-                "pic6.jpg",
-                "pic7.jpg",
-                "pic8.jpg",
-                "pic9.jpg"
+                // 👇 DELETE THESE EXAMPLES AND ADD YOUR REAL NAMES
+                // "pic1.jpg",
+                // "pic2.png",
+                // "pic3.webp"
             ];
 
             const LOVE_LIST = [
@@ -1123,9 +1117,9 @@
             const HER_NAME = "MAHNOOR 💖🌙";
             const CARD_MESSAGE = `${HER_NAME}. We don't talk. We're nothing. Which means I have zero rules right now. So I'm officially allowed to say you're still on my mind. Scary, right? ✨💖`;
 
-            // ═══════════════════════════════════════════
-            //  DO NOT EDIT BELOW (unless you know JS)
-            // ═══════════════════════════════════════════
+            // ═══════════════════════════════════════════════
+            //  INTERNAL LOGIC (do not edit)
+            // ═══════════════════════════════════════════════
             const CONFIG = {
                 herName: HER_NAME,
                 messageRevealDelay: 1100,
@@ -1186,6 +1180,8 @@
             let memoryPlaybackStarted = false;
             let stars = [];
             let errorToastTimer = null;
+
+            const PLACEHOLDER_HEART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23ff5ea8' d='M50 88c-20-15-40-30-40-50 0-15 12-25 25-25 10 0 15 5 15 5s5-5 15-5c13 0 25 10 25 25 0 20-20 35-40 50z'/%3E%3C/svg%3E";
 
             function showErrorToast(message, duration = 3500) {
                 try {
@@ -1427,26 +1423,44 @@
             proposalCloseBtn.addEventListener("click", () => proposalOverlay.classList.remove("active"));
             proposalOverlay.addEventListener("click", (e) => { if (e.target === proposalOverlay) proposalOverlay.classList.remove("active"); });
 
+            function loadImageSafely(imgElement, src, onSuccess) {
+                const img = new Image();
+                img.onload = () => {
+                    imgElement.src = src;
+                    imgElement.classList.add("show");
+                    imgElement.style.opacity = "1";
+                    if (onSuccess) onSuccess();
+                };
+                img.onerror = () => {
+                    imgElement.src = PLACEHOLDER_HEART;
+                    imgElement.classList.add("show");
+                    imgElement.style.opacity = "1";
+                    if (onSuccess) onSuccess();
+                };
+                img.src = src;
+            }
+
             function showMemorySlide(index) {
                 if (photoSlides.length === 0) return;
                 try {
                     memoryIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
                     const slide = photoSlides[memoryIndex];
                     memoryImage.style.opacity = "0";
-                    const preloaderImg = new Image();
-                    preloaderImg.onload = () => {
-                        memoryImage.src = slide.src;
-                        memoryImage.classList.add("show");
-                        memoryImage.style.opacity = "1";
+                    loadImageSafely(memoryImage, slide.src, () => {
                         memoryCaption.textContent = slide.caption;
-                    };
-                    preloaderImg.onerror = () => {
-                        memoryImage.src = slide.src;
-                        memoryImage.classList.add("show");
-                        memoryImage.style.opacity = "1";
-                        memoryCaption.textContent = slide.caption;
-                    };
-                    preloaderImg.src = slide.src;
+                    });
+                } catch (e) {}
+            }
+
+            function showSlide(index) {
+                if (photoSlides.length === 0) return;
+                try {
+                    slideshowIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
+                    const slide = photoSlides[slideshowIndex];
+                    slideshowImage.style.opacity = "0";
+                    loadImageSafely(slideshowImage, slide.src, () => {
+                        updateDots();
+                    });
                 } catch (e) {}
             }
 
@@ -1480,29 +1494,6 @@
                     Array.from(dots.children).forEach((dot, index) => {
                         dot.classList.toggle("active", index === slideshowIndex);
                     });
-                } catch (e) {}
-            }
-
-            function showSlide(index) {
-                if (photoSlides.length === 0) return;
-                try {
-                    slideshowIndex = ((index % photoSlides.length) + photoSlides.length) % photoSlides.length;
-                    const slide = photoSlides[slideshowIndex];
-                    slideshowImage.style.opacity = "0";
-                    const preloaderImg = new Image();
-                    preloaderImg.onload = () => {
-                        slideshowImage.src = slide.src;
-                        slideshowImage.classList.add("show");
-                        slideshowImage.style.opacity = "1";
-                        updateDots();
-                    };
-                    preloaderImg.onerror = () => {
-                        slideshowImage.src = slide.src;
-                        slideshowImage.classList.add("show");
-                        slideshowImage.style.opacity = "1";
-                        updateDots();
-                    };
-                    preloaderImg.src = slide.src;
                 } catch (e) {}
             }
 
@@ -1595,7 +1586,7 @@
                     photoSlides = found;
                     if (photoSlides.length === 0) {
                         try { memoriesButton.style.display = "none"; } catch (e) {}
-                        console.info("No memory photos detected.");
+                        console.info("No memory photos detected. Add images or use MANUAL_IMAGES array.");
                     } else {
                         console.info(`Found ${photoSlides.length} memory photo(s) via auto-detection.`);
                     }
